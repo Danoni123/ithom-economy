@@ -2,24 +2,18 @@ import { useEffect, useMemo, useState } from 'react'
 import CandleChart from './CandleChart.jsx'
 import InactiveChart from './InactiveChart.jsx'
 import { PERIOD_LABEL, STEP_MS } from '../data/chartData.js'
+import { CAP_VALUE, CAP_PERIOD_LABEL, CAP_STEP_MS } from '../data/capData.js'
 
 const DAY = 24 * 60 * 60 * 1000
 
 const TABS = [
-  { id: 'cap', label: 'Капитализация', badge: 'Скоро' },
+  { id: 'cap', label: 'Капитализация' },
   { id: 'itc', label: 'Цена ITC', badge: 'Скоро' },
   { id: 'progress', label: 'Прогресс развития' },
 ]
 
-// Разделы-заглушки: график пока недоступен, значения равны нулю
+// Раздел-заглушка: график пока недоступен, значения равны нулю
 const INACTIVE = {
-  cap: {
-    title: 'Общая капитализация ITHom',
-    value: '$0',
-    zero: '$0',
-    card: 'График капитализации пока не активен',
-    text: 'Сейчас капитализация проекта равна $0. Свечи появятся здесь после запуска.',
-  },
   itc: {
     title: 'Цена токена ITC',
     value: '$0.00',
@@ -30,8 +24,13 @@ const INACTIVE = {
 }
 
 const fmtDelta = (v) => `${v >= 0 ? '+' : ''}${v.toFixed(2)}`
+const fmtMoney = (v) => `${Math.round(v).toLocaleString('ru-RU')} ₽`
+const fmtDeltaMoney = (v) => `${v >= 0 ? '+' : '−'}${Math.round(Math.abs(v)).toLocaleString('ru-RU')} ₽`
 
-export default function ChartSection({ data, progress }) {
+const CHART_NOTE =
+  'одна свеча — 4 часа. Колесо мыши или щипок пальцами — масштаб, перетаскивание — сдвиг. Линии и прямоугольники рисуются инструментами слева.'
+
+export default function ChartSection({ data, capData, progress, capValue = CAP_VALUE }) {
   const [tab, setTab] = useState('progress')
   const [filled, setFilled] = useState(false)
 
@@ -52,6 +51,19 @@ export default function ChartSection({ data, progress }) {
       lo: Math.min(...data.map((d) => d.l)),
     }
   }, [data])
+
+  const capStats = useMemo(() => {
+    const n = capData.length
+    const perDay = Math.round(DAY / CAP_STEP_MS)
+    const last = capData[n - 1]
+    return {
+      day: last.c - capData[n - 1 - perDay].c,
+      start: capData[0].c,
+      hi: Math.max(...capData.map((d) => d.h)),
+      lo: Math.min(...capData.map((d) => d.l)),
+      vol: capData.reduce((s, d) => s + d.v, 0),
+    }
+  }, [capData])
 
   const inactive = INACTIVE[tab]
 
@@ -80,7 +92,7 @@ export default function ChartSection({ data, progress }) {
         </div>
 
         <div className="panel" id="chart-panel" role="tabpanel" aria-labelledby={`tab-${tab}`}>
-          {tab === 'progress' ? (
+          {tab === 'progress' && (
             <>
               <div className="panel-head">
                 <div className="ph-main">
@@ -135,7 +147,60 @@ export default function ChartSection({ data, progress }) {
                 </div>
               </div>
             </>
-          ) : (
+          )}
+
+          {tab === 'cap' && (
+            <>
+              <div className="panel-head">
+                <div className="ph-main">
+                  <p className="ph-title">Капитализация проекта ITHom, {CAP_PERIOD_LABEL}</p>
+                  <div className="ph-row">
+                    <span className="ph-value">{fmtMoney(capValue)}</span>
+                    <span className="ph-sub">оценка проекта</span>
+                    <span className={`chip ${capStats.day >= 0 ? 'up' : 'down'}`}>
+                      {fmtDeltaMoney(capStats.day)} за сутки
+                    </span>
+                  </div>
+                </div>
+                <dl className="ph-stats">
+                  <div>
+                    <dt>Старт</dt>
+                    <dd>{fmtMoney(capStats.start)}</dd>
+                  </div>
+                  <div>
+                    <dt>Максимум</dt>
+                    <dd className="up">{fmtMoney(capStats.hi)}</dd>
+                  </div>
+                  <div>
+                    <dt>Минимум</dt>
+                    <dd>{fmtMoney(capStats.lo)}</dd>
+                  </div>
+                  <div>
+                    <dt>Рост за 6 дней</dt>
+                    <dd className="up">
+                      ×{Math.round((capValue / Math.max(capStats.start, 1)) * 10) / 10}
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+
+              <CandleChart
+                key="cap"
+                data={capData}
+                storageKey="cap-v1"
+                bounds={{ min: 0, max: 16000 }}
+                formatValue={fmtMoney}
+                formatAxis={fmtMoney}
+                volumeLabel="Объём"
+                stepMs={CAP_STEP_MS}
+                ariaLabel="Свечной график капитализации ITHom"
+                scale100={false}
+                fmtChange={(v) => `${v >= 0 ? '+' : '−'}${Math.round(Math.abs(v)).toLocaleString('ru-RU')} ₽`}
+              />
+            </>
+          )}
+
+          {inactive && (
             <>
               <div className="panel-head">
                 <div className="ph-main">
@@ -169,10 +234,9 @@ export default function ChartSection({ data, progress }) {
           )}
         </div>
 
-        {tab === 'progress' && (
+        {(tab === 'progress' || tab === 'cap') && (
           <p className="chart-note">
-            Период: {PERIOD_LABEL}, одна свеча — 4 часа. Колесо мыши или щипок пальцами — масштаб, перетаскивание —
-            сдвиг. Линии и прямоугольники рисуются инструментами слева.
+            Период: {tab === 'cap' ? CAP_PERIOD_LABEL : PERIOD_LABEL}, {CHART_NOTE}
           </p>
         )}
       </div>

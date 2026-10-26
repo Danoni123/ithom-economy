@@ -14,6 +14,14 @@
   --font: 'Onest', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --display: 'Unbounded', 'Onest', system-ui, sans-serif;
 
+  /* Размеры шрифтов: одна шкала для всего сайта */
+  --fs-xs: 12px;                                /* подписи шкалы */
+  --fs-sm: clamp(12.5px, 0.9vw, 14px);          /* мета, даты, теги */
+  --fs-md: clamp(14px, 1.05vw, 16px);           /* вторичный текст */
+  --fs-base: clamp(15px, 1.15vw, 18px);         /* основной текст, табы */
+  --fs-stat: clamp(16px, 1.5vw, 26px);          /* числовые показатели */
+  --fs-title: clamp(19px, 1.5vw, 26px);         /* заголовки карточек */
+
   --header-h: 48px;
   --stage-h: clamp(460px, 72vh, 880px);
 }
@@ -127,7 +135,7 @@ button {
   padding: 6px 12px;
   border-radius: 8px;
   color: var(--muted);
-  font-size: 14px;
+  font-size: var(--fs-md);
   transition: color 0.15s, background 0.15s;
 }
 .nav a:hover {
@@ -147,7 +155,7 @@ button {
   padding: 4px 12px 4px 12px;
   border: 1px solid var(--line);
   border-radius: 999px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 .hp-label {
   color: var(--muted);
@@ -214,7 +222,7 @@ button {
 }
 .hero p {
   color: var(--muted);
-  font-size: clamp(15px, 1.3vw, 20px);
+  font-size: clamp(15px, 1.25vw, 20px);
   max-width: 52ch;
   padding-bottom: 8px;
   justify-self: end;
@@ -246,7 +254,7 @@ button {
   background: transparent;
   color: var(--muted);
   font-weight: 500;
-  font-size: clamp(15px, 1.1vw, 18px);
+  font-size: var(--fs-base);
   cursor: pointer;
   white-space: nowrap;
   transition: background 0.18s, color 0.18s;
@@ -263,7 +271,7 @@ button {
   border-radius: 999px;
   background: var(--surface-2);
   color: var(--muted);
-  font-size: 11.5px;
+  font-size: var(--fs-xs);
   font-weight: 500;
 }
 .tab[aria-selected='true'] .tab-badge {
@@ -296,7 +304,7 @@ button {
 }
 .ph-title {
   color: var(--muted);
-  font-size: clamp(14px, 1.1vw, 17px);
+  font-size: var(--fs-md);
   margin-bottom: 8px;
 }
 .ph-row {
@@ -314,12 +322,12 @@ button {
 }
 .ph-sub {
   color: var(--muted);
-  font-size: clamp(14px, 1.1vw, 18px);
+  font-size: var(--fs-base);
 }
 .chip {
   padding: 4px 12px;
   border-radius: 999px;
-  font-size: clamp(13px, 1vw, 16px);
+  font-size: var(--fs-md);
   font-weight: 500;
 }
 .chip.up {
@@ -347,10 +355,10 @@ button {
 }
 .ph-stats dt {
   color: var(--muted);
-  font-size: clamp(12.5px, 0.95vw, 15px);
+  font-size: var(--fs-sm);
 }
 .ph-stats dd {
-  font-size: clamp(16px, 1.5vw, 26px);
+  font-size: var(--fs-stat);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.01em;
@@ -628,7 +636,7 @@ button {
 }
 .ia-card p {
   color: var(--muted);
-  font-size: 14.5px;
+  font-size: var(--fs-md);
 }
 
 /* Полоса прогресса */
@@ -641,7 +649,7 @@ button {
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 14px;
-  font-size: clamp(14px, 1.1vw, 18px);
+  font-size: var(--fs-base);
   color: var(--muted);
 }
 .track-head b {
@@ -675,7 +683,7 @@ button {
   display: flex;
   justify-content: space-between;
   margin-top: 8px;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--dim);
   font-variant-numeric: tabular-nums;
 }
@@ -685,7 +693,7 @@ button {
   margin: 14px auto 0;
   text-align: center;
   color: var(--dim);
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
 }
 
 /* ───────────── Новости ───────────── */
@@ -708,6 +716,7 @@ button {
 }
 .news-head p {
   color: var(--muted);
+  font-size: var(--fs-md);
 }
 
 .news-grid {
@@ -735,7 +744,7 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--muted);
 }
 .tag {
@@ -746,19 +755,19 @@ button {
   font-size: 12.5px;
 }
 .card h3 {
-  font-size: clamp(19px, 1.5vw, 26px);
+  font-size: var(--fs-title);
   line-height: 1.3;
   font-weight: 600;
   letter-spacing: -0.01em;
 }
 .card p {
   color: var(--muted);
-  font-size: clamp(15px, 1.1vw, 18px);
+  font-size: var(--fs-base);
   flex: 1;
 }
 .card-link {
   align-self: flex-start;
-  font-size: 14.5px;
+  font-size: var(--fs-md);
   font-weight: 500;
   border-bottom: 1px solid var(--line-2);
   padding-bottom: 1px;
@@ -784,7 +793,7 @@ button {
   margin-top: 16px;
   max-width: 38ch;
   color: var(--muted);
-  font-size: 14.5px;
+  font-size: var(--fs-md);
 }
 .footer-col {
   display: flex;
@@ -793,13 +802,13 @@ button {
   gap: 10px;
 }
 .footer-col h4 {
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   margin-bottom: 4px;
 }
 .footer-col a {
   color: var(--muted);
-  font-size: 14.5px;
+  font-size: var(--fs-md);
   transition: color 0.15s;
 }
 .footer-col a:hover {
@@ -828,7 +837,7 @@ button {
   margin-top: 20px;
   border-top: 1px solid var(--line);
   color: var(--dim);
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 
 /* ───────────── Адаптация ───────────── */

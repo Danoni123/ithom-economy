@@ -35,9 +35,9 @@ export default function Footer() {
 
           <nav className="footer-col" aria-label="Соцсети">
             <h4>Мы в сети</h4>
-            <a href="#">Telegram</a>
-            <a href="#">GitHub</a>
-            <a href="#">X (Twitter)</a>
+            <a href="https://t.me/ITHom_e" target="_blank" rel="noopener noreferrer">
+              Telegram
+            </a>
           </nav>
         </div>
 

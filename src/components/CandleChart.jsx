@@ -113,9 +113,9 @@ function loadDrawings(key) {
 }
 
 function defaultView(n, screenW) {
-  const visible = screenW < 640 ? Math.min(n, 44) : screenW < 1400 ? Math.min(n, 90) : n
-  const span = visible + 6
-  return { start: n - visible, span }
+  // по умолчанию вписываем весь период
+  const span = n + 6
+  return { start: -6, span }
 }
 
 function badge(ctx, text, x, y, w, bg, fg) {
@@ -152,6 +152,9 @@ export default function CandleChart({
   formatAxis = (v, step) => `${v.toFixed(Number.isInteger(step) ? 0 : 1)}%`,
   volumeLabel = 'Активность',
   stepMs = DAY,
+  ariaLabel = 'Свечной график',
+  scale100 = true,
+  fmtChange = (v) => `${v >= 0 ? '+' : ''}${v.toFixed(2)}`,
 }) {
   const N = data.length
 
@@ -889,7 +892,7 @@ export default function CandleChart({
         <canvas
           ref={canvasRef}
           role="img"
-          aria-label="Свечной график прогресса развития проекта"
+          aria-label={ariaLabel}
           style={{
             width: '100%',
             height: '100%',
@@ -921,8 +924,7 @@ export default function CandleChart({
             Закр <b>{formatValue(c.c)}</b>
           </span>
           <span className={`lg-item lg-chg ${dirClass}`}>
-            {chg >= 0 ? '+' : ''}
-            {chg.toFixed(2)}
+            {fmtChange(chg)}
           </span>
         </div>
 
@@ -936,15 +938,17 @@ export default function CandleChart({
           <Btn title="Вписать в экран" onClick={fitView}>
             <IconFit />
           </Btn>
-          <button
-            type="button"
-            className={`tb tb-text${yMode === 'full' ? ' on' : ''}`}
-            title="Шкала 0–100%: показать путь до полной готовности"
-            aria-pressed={yMode === 'full'}
-            onClick={() => setYMode((m) => (m === 'auto' ? 'full' : 'auto'))}
-          >
-            0–100
-          </button>
+          {scale100 && (
+            <button
+              type="button"
+              className={`tb tb-text${yMode === 'full' ? ' on' : ''}`}
+              title="Шкала 0–100%: показать путь до полной готовности"
+              aria-pressed={yMode === 'full'}
+              onClick={() => setYMode((m) => (m === 'auto' ? 'full' : 'auto'))}
+            >
+              0–100
+            </button>
+          )}
         </div>
 
         {tool !== 'cursor' && !draft && <div className="cc-hint">{hints[tool]}</div>}
